@@ -21,22 +21,16 @@ class EncryptingStream implements StreamInterface
 
     /**
      * Raw 32-byte media key used for encryption.
-     *
-     * @var string
      */
     private readonly string $mediaKey;
 
     /**
      * WhatsApp media category.
-     *
-     * @var MediaType
      */
     private readonly MediaType $mediaType;
 
     /**
      * Generated sidecar bytes for streamable media, or null.
-     *
-     * @var string|null
      */
     private readonly ?string $sidecar;
 

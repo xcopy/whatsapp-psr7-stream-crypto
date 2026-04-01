@@ -11,6 +11,16 @@ use RuntimeException;
 class KeyFactory
 {
     /**
+     * Required raw media key size in bytes.
+     */
+    private const int MEDIA_KEY_LENGTH = 32;
+
+    /**
+     * Total HKDF output size in bytes for WhatsApp media key schedule.
+     */
+    private const int EXPANDED_KEY_LENGTH = 112;
+
+    /**
      * Expand media key into the 112-byte WhatsApp key schedule.
      *
      * Uses HKDF-SHA256 with media-type-specific application info to derive
@@ -25,18 +35,18 @@ class KeyFactory
      */
     public static function fromMediaKey(string $mediaKey, MediaType $mediaType): KeyMaterial
     {
-        if (strlen($mediaKey) !== 32) {
+        if (strlen($mediaKey) !== self::MEDIA_KEY_LENGTH) {
             throw new InvalidArgumentException('mediaKey must be exactly 32 bytes');
         }
 
         $expanded = hash_hkdf(
             algo: 'sha256',
             key: $mediaKey,
-            length: 112,
+            length: self::EXPANDED_KEY_LENGTH,
             info: $mediaType->hkdfInfo(),
         );
 
-        if (strlen($expanded) !== 112) {
+        if (strlen($expanded) !== self::EXPANDED_KEY_LENGTH) {
             throw new RuntimeException('Unable to derive key material via HKDF');
         }
 
