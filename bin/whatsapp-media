@@ -1,0 +1,71 @@
+#!/usr/bin/env php
+<?php
+
+use GuzzleHttp\Psr7\Utils;
+use Wanted\WhatsappMedia\DecryptingStream;
+use Wanted\WhatsappMedia\EncryptingStream;
+use Wanted\WhatsappMedia\MediaType;
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+if ($argc < 5) {
+    fwrite(STDERR, "Usage:\n");
+    fwrite(STDERR, "  encrypt <mediaType> <input> <output> [base64MediaKey|@rawKeyFile]\n");
+    fwrite(STDERR, "  decrypt <mediaType> <input> <output> <base64MediaKey|@rawKeyFile>\n");
+    exit(1);
+}
+
+$command = $argv[1];
+$mediaType = MediaType::from(strtoupper($argv[2]));
+$inputFile = $argv[3];
+$outputFile = $argv[4];
+
+$in = Utils::streamFor(fopen($inputFile, 'rb'));
+
+if ($command === 'encrypt') {
+    $mediaKeyRaw = isset($argv[5]) ? resolveMediaKey($argv[5]) : null;
+
+    $encrypted = new EncryptingStream($in, $mediaType, $mediaKeyRaw, true);
+    file_put_contents($outputFile, (string) $encrypted);
+
+    fwrite(STDOUT, 'mediaKey(base64): ' . base64_encode($encrypted->getMediaKey()) . PHP_EOL);
+    if ($encrypted->getSidecar() !== null) {
+        file_put_contents($outputFile . '.sidecar', $encrypted->getSidecar());
+        fwrite(STDOUT, 'sidecar: ' . $outputFile . '.sidecar' . PHP_EOL);
+    }
+
+    exit(0);
+}
+
+if ($command === 'decrypt') {
+    if (!isset($argv[5])) {
+        throw new InvalidArgumentException('mediaKey is required for decrypt');
+    }
+
+    $mediaKeyRaw = resolveMediaKey($argv[5]);
+
+    $decrypted = new DecryptingStream($in, $mediaType, $mediaKeyRaw);
+    file_put_contents($outputFile, (string) $decrypted);
+    exit(0);
+}
+
+throw new InvalidArgumentException('Unknown command: ' . $command);
+
+function resolveMediaKey(string $value): string
+{
+    if (str_starts_with($value, '@')) {
+        $key = file_get_contents(substr($value, 1));
+        if ($key === false) {
+            throw new InvalidArgumentException('Unable to read raw media key file');
+        }
+
+        return $key;
+    }
+
+    $key = base64_decode($value, true);
+    if ($key === false) {
+        throw new InvalidArgumentException('Invalid base64 media key');
+    }
+
+    return $key;
+}
