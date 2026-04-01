@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "49aa2eccd9ff383b7ffa6882ac7d9dd3",
+    "content-hash": "8fcfa6d129d59c2c2e0f032c03aa916c",
     "packages": [
         {
             "name": "guzzlehttp/psr7",

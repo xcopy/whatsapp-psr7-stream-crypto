@@ -1,5 +1,5 @@
 {
-    "name": "wanted/whatsapp-psr7-stream-crypto",
+    "name": "xcopy/whatsapp-psr7-stream-crypto",
     "description": "PSR-7 stream decorators for WhatsApp-compatible media encryption/decryption",
     "type": "library",
     "license": "MIT",
@@ -18,12 +18,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Wanted\\WhatsappMedia\\": "src/"
+            "Xcopy\\WhatsappMedia\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Wanted\\WhatsappMedia\\Tests\\": "tests/"
+            "Xcopy\\WhatsappMedia\\Tests\\": "tests/"
         }
     },
     "scripts": {

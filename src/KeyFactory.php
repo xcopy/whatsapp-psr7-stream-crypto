@@ -1,6 +1,6 @@
 <?php
 
-namespace Wanted\WhatsappMedia;
+namespace Xcopy\WhatsappMedia;
 
 use InvalidArgumentException;
 use RuntimeException;

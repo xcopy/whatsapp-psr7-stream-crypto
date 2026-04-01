@@ -1,6 +1,6 @@
 <?php
 
-namespace Wanted\WhatsappMedia;
+namespace Xcopy\WhatsappMedia;
 
 use GuzzleHttp\Psr7\StreamDecoratorTrait;
 use GuzzleHttp\Psr7\Utils;

@@ -1,4 +1,4 @@
-# wanted/whatsapp-psr7-stream-crypto
+# xcopy/whatsapp-psr7-stream-crypto
 
 PSR-7 stream decorators for WhatsApp-compatible media encryption and decryption.
 
@@ -14,7 +14,7 @@ PSR-7 stream decorators for WhatsApp-compatible media encryption and decryption.
 As a library dependency:
 
 ```bash
-composer require wanted/whatsapp-psr7-stream-crypto
+git clone git@github.com:xcopy/whatsapp-psr7-stream-crypto
 ```
 
 For local development after cloning:
@@ -29,9 +29,9 @@ composer install
 <?php
 
 use GuzzleHttp\Psr7\Utils;
-use Wanted\WhatsappMedia\DecryptingStream;
-use Wanted\WhatsappMedia\EncryptingStream;
-use Wanted\WhatsappMedia\MediaType;
+use Xcopy\WhatsappMedia\DecryptingStream;
+use Xcopy\WhatsappMedia\EncryptingStream;
+use Xcopy\WhatsappMedia\MediaType;
 
 // Encrypt — passing null generates a random 32-byte mediaKey
 $encryptingStream = new EncryptingStream(

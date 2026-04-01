@@ -1,13 +1,13 @@
 <?php
 
-namespace Wanted\WhatsappMedia\Tests;
+namespace Xcopy\WhatsappMedia\Tests;
 
 use GuzzleHttp\Psr7\Utils;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Wanted\WhatsappMedia\DecryptingStream;
-use Wanted\WhatsappMedia\EncryptingStream;
-use Wanted\WhatsappMedia\MediaType;
+use Xcopy\WhatsappMedia\DecryptingStream;
+use Xcopy\WhatsappMedia\EncryptingStream;
+use Xcopy\WhatsappMedia\MediaType;
 
 final class SampleCompatibilityTest extends TestCase
 {

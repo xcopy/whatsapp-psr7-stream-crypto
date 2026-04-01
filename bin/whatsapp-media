@@ -2,9 +2,9 @@
 <?php
 
 use GuzzleHttp\Psr7\Utils;
-use Wanted\WhatsappMedia\DecryptingStream;
-use Wanted\WhatsappMedia\EncryptingStream;
-use Wanted\WhatsappMedia\MediaType;
+use Xcopy\WhatsappMedia\DecryptingStream;
+use Xcopy\WhatsappMedia\EncryptingStream;
+use Xcopy\WhatsappMedia\MediaType;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
