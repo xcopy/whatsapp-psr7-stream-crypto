@@ -15,9 +15,8 @@ class EncryptingStream implements StreamInterface
 
     /**
      * Encrypted payload stream.
-     *
-     * @var StreamInterface
      */
+    /** @phpstan-ignore-next-line property.onlyWritten */
     private StreamInterface $stream;
 
     /**

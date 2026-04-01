@@ -36,7 +36,7 @@ class KeyFactory
             info: $mediaType->hkdfInfo(),
         );
 
-        if ($expanded === '' || strlen($expanded) !== 112) {
+        if (strlen($expanded) !== 112) {
             throw new RuntimeException('Unable to derive key material via HKDF');
         }
 

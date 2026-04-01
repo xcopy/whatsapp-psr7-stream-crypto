@@ -15,9 +15,8 @@ class DecryptingStream implements StreamInterface
 
     /**
      * Decrypted plaintext stream.
-     *
-     * @var StreamInterface
      */
+    /** @phpstan-ignore-next-line property.onlyWritten */
     private StreamInterface $stream;
 
     /**
