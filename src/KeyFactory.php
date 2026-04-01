@@ -5,8 +5,24 @@ namespace Xcopy\WhatsappMedia;
 use InvalidArgumentException;
 use RuntimeException;
 
+/**
+ * Derives encryption, MAC, and IV material from a 32-byte media key.
+ */
 class KeyFactory
 {
+    /**
+     * Expand media key into the 112-byte WhatsApp key schedule.
+     *
+     * Uses HKDF-SHA256 with media-type-specific application info to derive
+     * IV, cipher key, MAC key, and reference key from the input media key.
+     *
+     * @param string $mediaKey Raw 32-byte media key.
+     * @param MediaType $mediaType WhatsApp media category for HKDF info string.
+     *
+     * @return KeyMaterial Derived key material (IV, cipher key, MAC key, ref key).
+     * @throws InvalidArgumentException If media key is not exactly 32 bytes.
+     * @throws RuntimeException If HKDF expansion fails.
+     */
     public static function fromMediaKey(string $mediaKey, MediaType $mediaType): KeyMaterial
     {
         if (strlen($mediaKey) !== 32) {

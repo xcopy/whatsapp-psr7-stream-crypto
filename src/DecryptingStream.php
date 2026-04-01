@@ -6,12 +6,30 @@ use GuzzleHttp\Psr7\StreamDecoratorTrait;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\StreamInterface;
 
+/**
+ * PSR-7 stream decorator that validates MAC and decrypts WhatsApp payloads.
+ */
 class DecryptingStream implements StreamInterface
 {
     use StreamDecoratorTrait;
 
+    /**
+     * Decrypted plaintext stream.
+     *
+     * @var StreamInterface
+     */
     private StreamInterface $stream;
 
+    /**
+     * Create a decrypting stream that validates MAC and decrypts the payload.
+     *
+     * @param StreamInterface $source Encrypted payload stream (ciphertext + MAC).
+     * @param MediaType $mediaType WhatsApp media category.
+     * @param string $mediaKey Raw 32-byte media key.
+     *
+     * @throws InvalidMacException If payload is too short or MAC validation fails.
+     * @throws CryptoException If decryption operation fails.
+     */
     public function __construct(StreamInterface $source, MediaType $mediaType, string $mediaKey)
     {
         $keys = KeyFactory::fromMediaKey($mediaKey, $mediaType);
@@ -24,6 +42,7 @@ class DecryptingStream implements StreamInterface
         [$ciphertext, $mac] = CryptoUtils::splitEncryptedPayload($payload);
 
         $expected = CryptoUtils::truncatedHmacSha256($keys->iv . $ciphertext, $keys->macKey);
+
         if (!hash_equals($expected, $mac)) {
             throw new InvalidMacException('MAC validation failed');
         }
