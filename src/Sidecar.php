@@ -36,6 +36,7 @@ class Sidecar
         $offset = 0;
         $sidecar = '';
 
+        // Each fragment signs 64K bytes plus one AES block of look-ahead.
         while ($offset < $length) {
             $chunk = substr($stream, $offset, self::BLOCK + self::OVERLAP);
             if ($chunk === '') {
@@ -43,6 +44,7 @@ class Sidecar
             }
 
             $sidecar .= CryptoUtils::truncatedHmacSha256($chunk, $macKey);
+            // Next chunk starts exactly 64K later.
             $offset += self::BLOCK;
         }
 

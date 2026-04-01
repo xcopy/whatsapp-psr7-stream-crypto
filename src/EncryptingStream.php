@@ -70,10 +70,12 @@ class EncryptingStream implements StreamInterface
             throw new CryptoException('Encryption failed');
         }
 
+        // MAC binds both IV and ciphertext per WhatsApp media format.
         $mac = CryptoUtils::truncatedHmacSha256($keys->iv . $ciphertext, $keys->macKey);
         $encryptedMedia = $ciphertext . $mac;
 
         $this->sidecar = $generateSidecar && $this->mediaType->isStreamable()
+            // Sidecar chunking must operate on iv + (ciphertext + mac).
             ? Sidecar::fromEncryptedMedia($encryptedMedia, $keys->macKey, $keys->iv)
             : null;
 

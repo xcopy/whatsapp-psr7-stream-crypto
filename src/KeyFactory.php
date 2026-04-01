@@ -40,6 +40,7 @@ class KeyFactory
             throw new RuntimeException('Unable to derive key material via HKDF');
         }
 
+        // WhatsApp key schedule: 16-byte IV + 32-byte cipher key + 32-byte MAC key + 32-byte ref key.
         return new KeyMaterial(
             iv: substr($expanded, 0, 16),
             cipherKey: substr($expanded, 16, 32),

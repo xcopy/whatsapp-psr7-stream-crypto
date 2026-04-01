@@ -42,6 +42,7 @@ class DecryptingStream implements StreamInterface
 
         $expected = CryptoUtils::truncatedHmacSha256($keys->iv . $ciphertext, $keys->macKey);
 
+        // Constant-time comparison prevents MAC oracle timing leaks.
         if (!hash_equals($expected, $mac)) {
             throw new InvalidMacException('MAC validation failed');
         }
