@@ -15,35 +15,31 @@ class DecryptingStream implements StreamInterface
     public function __construct(StreamInterface $source, MediaType $mediaType, string $mediaKey)
     {
         $keys = KeyFactory::fromMediaKey($mediaKey, $mediaType);
-        $payload = self::readAll($source);
+        $payload = CryptoUtils::readAll($source);
 
-        if (strlen($payload) < 11) {
+        if (strlen($payload) <= CryptoUtils::TRUNCATED_MAC_LENGTH) {
             throw new InvalidMacException('Encrypted payload is too short');
         }
 
-        $ciphertext = substr($payload, 0, -10);
-        $mac = substr($payload, -10);
+        [$ciphertext, $mac] = CryptoUtils::splitEncryptedPayload($payload);
 
-        $expected = substr(hash_hmac('sha256', $keys->iv . $ciphertext, $keys->macKey, true), 0, 10);
+        $expected = CryptoUtils::truncatedHmacSha256($keys->iv . $ciphertext, $keys->macKey);
         if (!hash_equals($expected, $mac)) {
             throw new InvalidMacException('MAC validation failed');
         }
 
-        $plaintext = openssl_decrypt($ciphertext, 'aes-256-cbc', $keys->cipherKey, OPENSSL_RAW_DATA, $keys->iv);
+        $plaintext = openssl_decrypt(
+            data: $ciphertext,
+            cipher_algo: 'aes-256-cbc',
+            passphrase: $keys->cipherKey,
+            options: OPENSSL_RAW_DATA,
+            iv: $keys->iv
+        );
+
         if ($plaintext === false) {
             throw new CryptoException('Decryption failed');
         }
 
         $this->stream = Utils::streamFor($plaintext);
-    }
-
-    private static function readAll(StreamInterface $stream): string
-    {
-        $data = '';
-        while (!$stream->eof()) {
-            $data .= $stream->read(8192);
-        }
-
-        return $data;
     }
 }

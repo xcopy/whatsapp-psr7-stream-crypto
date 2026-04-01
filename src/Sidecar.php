@@ -20,7 +20,7 @@ class Sidecar
                 break;
             }
 
-            $sidecar .= substr(hash_hmac('sha256', $chunk, $macKey, true), 0, 10);
+            $sidecar .= CryptoUtils::truncatedHmacSha256($chunk, $macKey);
             $offset += self::BLOCK;
         }
 

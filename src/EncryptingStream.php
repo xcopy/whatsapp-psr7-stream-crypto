@@ -21,7 +21,7 @@ class EncryptingStream implements StreamInterface
         $this->mediaType = $mediaType;
 
         $keys = KeyFactory::fromMediaKey($this->mediaKey, $this->mediaType);
-        $plaintext = self::readAll($source);
+        $plaintext = CryptoUtils::readAll($source);
 
         $ciphertext = openssl_encrypt(
             data: $plaintext,
@@ -35,7 +35,7 @@ class EncryptingStream implements StreamInterface
             throw new CryptoException('Encryption failed');
         }
 
-        $mac = substr(hash_hmac('sha256', $keys->iv . $ciphertext, $keys->macKey, true), 0, 10);
+        $mac = CryptoUtils::truncatedHmacSha256($keys->iv . $ciphertext, $keys->macKey);
         $encryptedMedia = $ciphertext . $mac;
         $this->sidecar = $generateSidecar && $this->mediaType->isStreamable()
             ? Sidecar::fromEncryptedMedia($encryptedMedia, $keys->macKey, $keys->iv)
@@ -56,15 +56,5 @@ class EncryptingStream implements StreamInterface
     public function getSidecar(): ?string
     {
         return $this->sidecar;
-    }
-
-    private static function readAll(StreamInterface $stream): string
-    {
-        $data = '';
-        while (!$stream->eof()) {
-            $data .= $stream->read(8192);
-        }
-
-        return $data;
     }
 }
